@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vintage Homes | Timeless Property &amp; Investment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+/* ==========================================================
+   VINTAGE HOMES — DESIGN TOKENS
+========================================================== */
+:root{
+  --forest:        #1F2E22;
+  --forest-deep:   #16211A;
+  --parchment:     #EDE6D6;
+  --parchment-dim: #E2D9C4;
+  --brass:         #B8965A;
+  --brick:         #8C4A34;
+  --sage:          #A9B79E;
+  --ink:           #2B2620;
+  --ink-soft:      #55503F;
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --radius: 4px;
+  --wrap: 1140px;
+}
+*{ box-sizing: border-box; }
+html{ scroll-behavior: smooth; }
+body{ margin:0; background: var(--forest); color: var(--parchment); font-family: var(--font-body); line-height: 1.55; }
+img{ max-width:100%; display:block; }
+a{ color:inherit; text-decoration:none; }
+.wrap{ max-width: var(--wrap); margin:0 auto; padding: 0 28px; }
+h1,h2,h3{ font-family: var(--font-display); font-weight:600; margin:0 0 .4em; letter-spacing:-0.01em; }
+h1{ font-size: clamp(2.4rem, 5vw, 3.6rem); line-height:1.05; }
+h2{ font-size: clamp(1.8rem, 3.2vw, 2.4rem); color: var(--parchment); }
+.section-label{ font-family: var(--font-mono); font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color: var(--brass); margin:0 0 .8em; }
+.btn{ display:inline-block; padding: .85em 1.6em; border-radius: var(--radius); font-weight:600; font-size:.95rem; border:1.5px solid transparent; cursor:pointer; transition: transform .15s ease, background .2s ease, border-color .2s ease; }
+.btn:hover{ transform: translateY(-1px); }
+.btn-primary{ background: var(--brass); color: var(--forest-deep); }
+.btn-primary:hover{ background:#c9a668; }
+.btn-ghost{ border-color: var(--sage); color: var(--parchment); margin-left:.8em; }
+.btn-ghost:hover{ border-color: var(--brass); color: var(--brass); }
+
+/* header */
+.site-header{ position: sticky; top:0; z-index:50; background: rgba(22,33,26,.92); backdrop-filter: blur(6px); border-bottom: 1px solid rgba(169,183,158,.18); }
+.header-inner{ display:flex; align-items:center; justify-content:space-between; padding-top:16px; padding-bottom:16px; }
+.brand{ display:flex; align-items:center; gap:.6em; }
+.brand-mark{ font-family: var(--font-mono); border:1.5px solid var(--brass); color: var(--brass); width:34px; height:34px; display:flex; align-items:center; justify-content:center; border-radius:50%; font-size:.8rem; }
+.brand-name{ font-family: var(--font-display); font-size:1.15rem; font-weight:600; letter-spacing:.01em; }
+.site-nav{ display:flex; align-items:center; gap:1.8em; font-size:.92rem; }
+.site-nav a{ color: var(--sage); transition: color .15s ease; cursor:pointer; }
+.site-nav a:hover{ color: var(--brass); }
+.admin-link{ font-family: var(--font-mono); font-size:.8rem; border:1px solid var(--sage); padding:.35em .8em; border-radius:3px; }
+
+/* hero */
+.hero{
+  padding: 96px 0 80px;
+  border-bottom:1px solid rgba(169,183,158,.15);
+  background:
+    linear-gradient(rgba(31,46,34,.90), rgba(22,33,26,.94)),
+    url('https://picsum.photos/seed/vintage-homes-hero/1600/900');
+  background-size: cover;
+  background-position: center;
+}
+.hero-inner{ display:grid; grid-template-columns: 1.1fr .9fr; gap:48px; align-items:center; }
+.eyebrow{ font-family: var(--font-mono); color: var(--brass); font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; margin-bottom:1em; }
+.hero-sub{ color: var(--sage); max-width: 46ch; margin: 1.1em 0 1.8em; font-size:1.05rem; }
+.house-illustration{ width:100%; height:auto; }
+
+/* about */
+.about{
+  padding: 88px 0;
+  border-bottom:1px solid rgba(169,183,158,.15);
+  background:
+    linear-gradient(rgba(22,33,26,.92), rgba(22,33,26,.96)),
+    url('https://picsum.photos/seed/vintage-homes-about/1600/900');
+  background-size: cover;
+  background-position: center;
+}
+.about-inner{ max-width: 760px; }
+.about-body{ color: var(--sage); font-size:1.05rem; }
+.stat-row{ display:flex; gap:48px; margin-top:2.4em; flex-wrap:wrap; }
+.stat{ display:flex; flex-direction:column; }
+.stat-num{ font-family: var(--font-mono); font-size:1.8rem; color: var(--brass); }
+.stat-label{ color: var(--sage); font-size:.85rem; margin-top:.2em; }
+
+/* portfolio */
+.portfolio{ padding: 88px 0; border-bottom:1px solid rgba(169,183,158,.15); }
+.portfolio-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:24px; margin-top:2em; }
+.listing-card{ background: var(--parchment); color: var(--ink); border-radius: var(--radius); overflow:hidden; }
+.listing-photo{ height:180px; background-size: cover; background-position: center; background-color: var(--sage); }
+.listing-info{ padding: 18px 20px; }
+.listing-info h3{ font-size:1.05rem; margin-bottom:.2em; color:var(--ink); }
+.listing-price{ font-family: var(--font-mono); color: var(--brick); font-weight:500; font-size:.95rem; }
+.listing-meta{ color: var(--ink-soft); font-size:.85rem; margin-top:.4em; }
+
+/* investors */
+.investors{
+  padding: 96px 0;
+  border-bottom:1px solid rgba(169,183,158,.15);
+  background:
+    linear-gradient(rgba(31,46,34,.93), rgba(31,46,34,.93)),
+    url('https://picsum.photos/seed/vintage-homes-ledger/1600/900');
+  background-size: cover;
+  background-position: center;
+}
+.section-sub{ color: var(--sage); margin-top:-.6em; margin-bottom:2.2em; max-width:56ch; }
+.investor-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.ledger-card{ position:relative; background: var(--parchment); color: var(--ink); border-radius: var(--radius); padding: 28px 24px 26px; border: 1px solid rgba(43,38,32,.08); }
+.ledger-card::before{ content:""; position:absolute; left:0; right:0; top:64px; border-top: 1px dashed rgba(43,38,32,.25); }
+.investor-photo-row{ display:flex; align-items:center; gap:14px; margin-bottom: 20px; position:relative; z-index:1; }
+.investor-photo{ width:58px; height:58px; border-radius:50%; object-fit: cover; border: 2px solid var(--brass); background: var(--forest); }
+.investor-photo.is-fallback{ display:flex; align-items:center; justify-content:center; font-family: var(--font-display); font-weight:600; font-size:1.1rem; color: var(--parchment); }
+.investor-name{ font-family: var(--font-display); font-size:1.15rem; font-weight:600; line-height:1.15; }
+.investor-role{ font-size:.82rem; color: var(--ink-soft); margin-top:.15em; }
+.investor-bio{ font-size:.92rem; color: var(--ink-soft); margin: 14px 0 20px; }
+.invest-stamp{ display:inline-flex; flex-direction:column; align-items:flex-start; border:1.5px solid var(--brick); border-radius: var(--radius); padding: .5em .9em; transform: rotate(-1.2deg); }
+.invest-stamp-label{ font-family: var(--font-mono); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color: var(--brick); }
+.invest-stamp-amount{ font-family: var(--font-mono); font-size:1.15rem; font-weight:500; color: var(--brick); }
+
+/* contact */
+.contact{
+  padding: 96px 0;
+  background:
+    linear-gradient(rgba(22,33,26,.94), rgba(22,33,26,.97)),
+    url('https://picsum.photos/seed/vintage-homes-contact/1600/900');
+  background-size: cover;
+  background-position: center;
+}
+.contact-inner{ display:grid; grid-template-columns: 1fr 1fr; gap:56px; }
+.contact-details{ list-style:none; padding:0; margin: 1.6em 0 0; display:flex; flex-direction:column; gap:.9em; }
+.contact-details strong{ display:block; font-family:var(--font-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color: var(--brass); margin-bottom:.15em; }
+.contact-form{ display:flex; flex-direction:column; gap:12px; }
+.contact-form input, .contact-form textarea{ background: var(--forest-deep); border: 1px solid rgba(169,183,158,.3); color: var(--parchment); padding: .85em 1em; border-radius: var(--radius); font-family: var(--font-body); font-size:.95rem; }
+.contact-form input:focus, .contact-form textarea:focus{ outline:2px solid var(--brass); outline-offset:1px; }
+.contact-form button{ align-self:flex-start; }
+
+/* footer */
+.site-footer{ padding: 28px 0; border-top:1px solid rgba(169,183,158,.15); }
+.footer-inner{ display:flex; justify-content:space-between; align-items:center; font-size:.85rem; color: var(--sage); }
+.footer-admin{ font-family: var(--font-mono); font-size:.78rem; border:1px solid var(--sage); padding:.35em .8em; border-radius:3px; cursor:pointer; }
+
+@media (max-width: 860px){
+  .hero-inner{ grid-template-columns: 1fr; }
+  .hero-art{ order:-1; max-width:280px; margin:0 auto; }
+  .portfolio-grid, .investor-grid{ grid-template-columns: 1fr; }
+  .contact-inner{ grid-template-columns: 1fr; }
+  .site-nav{ gap:1em; font-size:.85rem; }
+  .stat-row{ gap:28px; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a href="#top" class="brand">
+      <span class="brand-mark">VH</span>
+      <span class="brand-name" id="site-name">Vintage Homes</span>
+    </a>
+    <nav class="site-nav">
+      <a href="#about">About</a>
+      <a href="#portfolio">Portfolio</a>
+      <a href="#investors">Investors</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="wrap hero-inner">
+    <div class="hero-copy">
+      <p class="eyebrow">Established Property &amp; Restoration Group</p>
+      <h1 id="hero-title">Timeless homes,<br>thoughtfully invested.</h1>
+      <p class="hero-sub" id="hero-subtitle">We acquire, restore and steward character properties &mdash; and we do it with our partners' capital treated like family heirlooms, not line items.</p>
+      <div class="hero-actions">
+        <a href="#investors" class="btn btn-primary">Meet the Investors</a>
+        <a href="#portfolio" class="btn btn-ghost">View Portfolio</a>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 420 380" xmlns="http://www.w3.org/2000/svg" class="house-illustration">
+        <polygon points="60,180 210,70 360,180" fill="none" stroke="var(--brass)" stroke-width="3"/>
+        <rect x="80" y="180" width="260" height="150" fill="none" stroke="var(--parchment)" stroke-width="3"/>
+        <rect x="120" y="220" width="50" height="60" fill="none" stroke="var(--parchment)" stroke-width="2.5"/>
+        <rect x="250" y="210" width="45" height="45" fill="none" stroke="var(--parchment)" stroke-width="2.5"/>
+        <line x1="272" y1="210" x2="272" y2="255" stroke="var(--parchment)" stroke-width="2"/>
+        <line x1="250" y1="232" x2="295" y2="232" stroke="var(--parchment)" stroke-width="2"/>
+        <rect x="195" y="90" width="30" height="45" fill="none" stroke="var(--brass)" stroke-width="2.5"/>
+        <line x1="30" y1="330" x2="390" y2="330" stroke="var(--sage)" stroke-width="2"/>
+        <circle cx="365" cy="60" r="18" fill="none" stroke="var(--brass)" stroke-width="2"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="about" id="about">
+  <div class="wrap about-inner">
+    <p class="section-label">01 &mdash; Our Philosophy</p>
+    <h2 id="about-title">We buy the houses other funds walk past.</h2>
+    <p id="about-body" class="about-body">Vintage Homes restores pre-war bungalows, brick four-squares and heritage cottages into homes people actually want to live in &mdash; then holds them for the long term. Every renovation ledger is open to our investors, and every dollar committed is tracked from acquisition to appraisal.</p>
+    <div class="stat-row">
+      <div class="stat"><span class="stat-num">37</span><span class="stat-label">Properties Restored</span></div>
+      <div class="stat"><span class="stat-num">$4.2B</span><span class="stat-label">Capital Deployed</span></div>
+      <div class="stat"><span class="stat-num">12</span><span class="stat-label">Years Operating</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="portfolio" id="portfolio">
+  <div class="wrap">
+    <p class="section-label">02 &mdash; The Portfolio</p>
+    <h2>Recent Restorations</h2>
+    <div class="portfolio-grid" id="portfolio-grid"></div>
+  </div>
+</section>
+
+<!--
+  BUSINESS FACE PROFILE / INVESTOR CARDS
+  ---------------------------------------------------------------
+  Rendered by renderSite() in the <script> block below.
+  To hand-edit names, photos, bios or investment amounts, search
+  this file for "EDIT TEAM / INVESTOR PROFILES HERE".
+  To edit them without touching code, use admin.html instead.
+-->
+<section class="investors" id="investors">
+  <div class="wrap">
+    <p class="section-label">03 &mdash; The Ledger</p>
+    <h2>Meet the Investors</h2>
+    <p class="section-sub">The people behind the capital &mdash; and what they've put behind Vintage Homes.</p>
+    <div class="investor-grid" id="investor-grid"></div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="wrap contact-inner">
+    <div>
+      <p class="section-label">04 &mdash; Get In Touch</p>
+      <h2 id="contact-title">Interested in investing or selling a property?</h2>
+      <ul class="contact-details">
+        <li><strong>Phone</strong> <span id="contact-phone">(613) 555-0148</span></li>
+        <li><strong>Email</strong> <span id="contact-email">hello@vintagehomes.example</span></li>
+        <li><strong>Office</strong> <span id="contact-address">184 Elm Street, Ottawa, ON</span></li>
+      </ul>
+    </div>
+    <form class="contact-form" onsubmit="event.preventDefault(); alert('Thanks — this demo form does not send messages yet. Connect it to your email service or a form backend.');">
+      <input type="text" placeholder="Full name" required>
+      <input type="email" placeholder="Email address" required>
+      <textarea rows="4" placeholder="Tell us about the property or your investment interest"></textarea>
+      <button type="submit" class="btn btn-primary">Send Message</button>
+    </form>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <span id="footer-name">&copy; <span class="year"></span> Vintage Homes. All rights reserved.</span>
+  </div>
+</footer>
+
+<script>
+
+/* ============================================================
+   SITE DATA
+   ------------------------------------------------------------
+   >>> EDIT TEAM / INVESTOR PROFILES HERE <
+   Each object below is one profile card on "Meet the Investors":
+     name, role, photo (URL, blank = initials), bio, invested
+   Saved admin-panel edits are stored in localStorage and will
+   override these defaults automatically. Use "Reset to defaults"
+   in the admin panel to clear saved edits and fall back to this.
+============================================================ */
+const defaultData = {
+  siteName: "Vintage Homes",
+  hero: {
+    title: "Timeless homes,<br>thoughtfully invested.",
+    subtitle: "We acquire, restore and steward character properties — and we do it with our partners' capital treated like family heirlooms, not line items."
+  },
+  about: {
+    title: "We buy the houses other funds walk past.",
+    body: "Vintage Homes restores pre-war bungalows, brick four-squares and heritage cottages into homes people actually want to live in — then holds them for the long term. Every renovation ledger is open to our investors, and every dollar committed is tracked from acquisition to appraisal."
+  },
+  contact: {
+    title: "Interested in investing or selling a property?",
+    phone: "(613) 555-0148",
+    email: "hello@vintagehomes.example",
+    address: "184 Elm Street, Ottawa, ON"
+  },
+  footerText: "All rights reserved.",
+  team: [
+    { name: "Margaret Ellery Cole", role: "Founder & Managing Partner", photo: "", bio: "Leads acquisitions and has personally overseen the restoration of more than 20 pre-1950s homes.", invested: "$850,000" },
+    { name: "Desmond Okafor-Hale", role: "Head of Capital & Investor Relations", photo: "", bio: "Structures every partnership agreement and keeps the ledger transparent for all investors.", invested: "$620,000" },
+    { name: "Priya Ratnasingham", role: "Director of Renovation & Design", photo: "", bio: "Oversees restoration standards, from structural repair to period-accurate finishes.", invested: "$410,000" }
+  ],
+  portfolio: [
+    { title: "The Elmhurst Bungalow", price: "$612,000", meta: "3 bed · Restored 2025", image: "https://picsum.photos/seed/elmhurst-bungalow/600/400" },
+    { title: "Birchwood Four-Square", price: "$745,000", meta: "4 bed · Restored 2024", image: "https://picsum.photos/seed/birchwood-foursquare/600/400" },
+    { title: "Maple Row Cottage", price: "$498,000", meta: "2 bed · Restored 2024", image: "https://picsum.photos/seed/maple-row-cottage/600/400" }
+  ]
+};
+
+const STORAGE_KEY = "vintageHomesData";
+
+function loadData(){
+  try{
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if(saved) return JSON.parse(saved);
+  }catch(e){ console.warn("Could not read saved data, using defaults.", e); }
+  return JSON.parse(JSON.stringify(defaultData));
+}
+function saveData(data){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+function initials(name){ return name.split(" ").map(w => w[0]).slice(0,2).join("").toUpperCase(); }
+
+function renderSite(){
+  const data = loadData();
+  document.getElementById("site-name").textContent = data.siteName;
+  document.title = `${data.siteName} | Timeless Property & Investment`;
+  document.getElementById("hero-title").innerHTML = data.hero.title;
+  document.getElementById("hero-subtitle").textContent = data.hero.subtitle;
+  document.getElementById("about-title").textContent = data.about.title;
+  document.getElementById("about-body").textContent = data.about.body;
+  document.getElementById("contact-title").textContent = data.contact.title;
+  document.getElementById("contact-phone").textContent = data.contact.phone;
+  document.getElementById("contact-email").textContent = data.contact.email;
+  document.getElementById("contact-address").textContent = data.contact.address;
+  document.getElementById("footer-name").innerHTML = `&copy; <span class="year"></span> ${data.siteName}. ${data.footerText}`;
+  document.querySelectorAll(".year").forEach(el => el.textContent = new Date().getFullYear());
+
+  const grid = document.getElementById("investor-grid");
+  grid.innerHTML = "";
+  data.team.forEach(person => {
+    const card = document.createElement("div");
+    card.className = "ledger-card";
+    const photoHtml = person.photo
+      ? `<img class="investor-photo" src="${person.photo}" alt="${person.name}">`
+      : `<div class="investor-photo is-fallback">${initials(person.name)}</div>`;
+    card.innerHTML = `
+      <div class="investor-photo-row">
+        ${photoHtml}
+        <div>
+          <div class="investor-name">${person.name}</div>
+          <div class="investor-role">${person.role}</div>
+        </div>
+      </div>
+      <p class="investor-bio">${person.bio}</p>
+      <div class="invest-stamp">
+        <span class="invest-stamp-label">Capital Invested</span>
+        <span class="invest-stamp-amount">${person.invested}</span>
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  const pgrid = document.getElementById("portfolio-grid");
+  pgrid.innerHTML = "";
+  data.portfolio.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "listing-card";
+    card.innerHTML = `
+      <div class="listing-photo" style="background-image:url('${item.image}')"></div>
+      <div class="listing-info">
+        <h3>${item.title}</h3>
+        <div class="listing-price">${item.price}</div>
+        <div class="listing-meta">${item.meta}</div>
+      </div>`;
+    pgrid.appendChild(card);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", renderSite);
+</script>
+</body>
+</html>
