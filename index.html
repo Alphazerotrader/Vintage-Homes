@@ -151,7 +151,10 @@ h2{ font-size: clamp(1.8rem, 3.2vw, 2.4rem); color: var(--parchment); }
   .site-nav{ gap:1em; font-size:.85rem; }
   .stat-row{ gap:28px; }
 }
+
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -229,8 +232,8 @@ h2{ font-size: clamp(1.8rem, 3.2vw, 2.4rem); color: var(--parchment); }
 <section class="investors" id="investors">
   <div class="wrap">
     <p class="section-label">03 &mdash; The Ledger</p>
-    <h2>Meet the Founders and Investors</h2>
-    <p class="section-sub">The people behind The Vintage the capital &mdash; and what they've put behind Vintage Homes.</p>
+    <h2>Meet the Investors</h2>
+    <p class="section-sub">The people behind the capital &mdash; and what they've put behind Vintage Homes.</p>
     <div class="investor-grid" id="investor-grid"></div>
   </div>
 </section>
@@ -246,11 +249,12 @@ h2{ font-size: clamp(1.8rem, 3.2vw, 2.4rem); color: var(--parchment); }
         <li><strong>Office</strong> <span id="contact-address">184 Elm Street, Ottawa, ON</span></li>
       </ul>
     </div>
-    <form class="contact-form" onsubmit="event.preventDefault(); alert('Thanks — this demo form does not send messages yet. Connect it to your email service or a form backend.');">
-      <input type="text" placeholder="Full name" required>
-      <input type="email" placeholder="Email address" required>
-      <textarea rows="4" placeholder="Tell us about the property or your investment interest"></textarea>
+    <form class="contact-form" id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+      <input type="text" name="name" placeholder="Full name" required>
+      <input type="email" name="email" placeholder="Email address" required>
+      <textarea rows="4" name="message" placeholder="Tell us about the property or your investment interest" required></textarea>
       <button type="submit" class="btn btn-primary">Send Message</button>
+      <p id="form-status" style="font-size:.85rem; color: var(--sage); display:none;"></p>
     </form>
   </div>
 </section>
@@ -269,9 +273,9 @@ h2{ font-size: clamp(1.8rem, 3.2vw, 2.4rem); color: var(--parchment); }
    >>> EDIT TEAM / INVESTOR PROFILES HERE <
    Each object below is one profile card on "Meet the Investors":
      name, role, photo (URL, blank = initials), bio, invested
-   Saved admin-panel edits are stored in localStorage and will
-   override these defaults automatically. Use "Reset to defaults"
-   in the admin panel to clear saved edits and fall back to this.
+   Saved admin-panel edits are stored in Firebase and sync live to
+   every visitor. Use "Reset to defaults" in the admin panel to
+   clear saved edits and fall back to this.
 ============================================================ */
 const defaultData = {
   siteName: "Vintage Homes",
@@ -302,20 +306,39 @@ const defaultData = {
   ]
 };
 
-const STORAGE_KEY = "vintageHomesData";
+/* ============================================================
+   FIREBASE CONFIG — PASTE YOUR OWN PROJECT'S CONFIG HERE
+   ------------------------------------------------------------
+   Get this from: Firebase Console → Project Settings → Your apps
+   This same object must also be pasted into admin.html.
+============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyAyScy_QnM4QACT5aIejDKYXWziqT1kPb0",
+  authDomain: "vintage-homes.firebaseapp.com",
+  databaseURL: "https://vintage-homes-default-rtdb.firebaseio.com",
+  projectId: "vintage-homes",
+  storageBucket: "vintage-homes.firebasestorage.app",
+  messagingSenderId: "142925845960",
+  appId: "1:142925845960:web:b50c1d4817136f7aaadcfd"
+};
 
-function loadData(){
-  try{
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if(saved) return JSON.parse(saved);
-  }catch(e){ console.warn("Could not read saved data, using defaults.", e); }
-  return JSON.parse(JSON.stringify(defaultData));
+let firebaseReady = false;
+let dbRef = null;
+try{
+  if(firebaseConfig.apiKey !== "YOUR_API_KEY" && firebaseConfig.apiKey){
+    firebase.initializeApp(firebaseConfig);
+    dbRef = firebase.database().ref("siteData");
+    firebaseReady = true;
+  }else{
+    console.warn("Firebase not configured yet — showing default content only. See the comment above firebaseConfig in this file.");
+  }
+}catch(e){
+  console.error("Firebase failed to initialize, falling back to defaults.", e);
 }
-function saveData(data){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+
 function initials(name){ return name.split(" ").map(w => w[0]).slice(0,2).join("").toUpperCase(); }
 
-function renderSite(){
-  const data = loadData();
+function renderSite(data){
   document.getElementById("site-name").textContent = data.siteName;
   document.title = `${data.siteName} | Timeless Property & Investment`;
   document.getElementById("hero-title").innerHTML = data.hero.title;
@@ -369,7 +392,59 @@ function renderSite(){
   });
 }
 
-document.addEventListener("DOMContentLoaded", renderSite);
+function startSite(){
+  if(firebaseReady && dbRef){
+    // Live sync: re-renders automatically the instant admin.html saves a change
+    dbRef.on("value", (snapshot) => {
+      const data = snapshot.val();
+      renderSite(data || defaultData);
+    }, (err) => {
+      console.error("Firebase read failed, showing defaults.", err);
+      renderSite(defaultData);
+    });
+  }else{
+    renderSite(defaultData);
+  }
+}
+document.addEventListener("DOMContentLoaded", startSite);
+
+/* ============================================================
+   CONTACT FORM SUBMISSION
+   ------------------------------------------------------------
+   Sends the form to Formspree (https://formspree.io) so messages
+   land in your email inbox. Replace YOUR_FORM_ID in the form's
+   "action" attribute above with your own Formspree endpoint.
+============================================================ */
+const contactForm = document.getElementById("contact-form");
+if(contactForm){
+  contactForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const status = document.getElementById("form-status");
+    const submitBtn = contactForm.querySelector("button[type=submit]");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Sending...";
+    try{
+      const response = await fetch(contactForm.action, {
+        method: "POST",
+        body: new FormData(contactForm),
+        headers: { "Accept": "application/json" }
+      });
+      if(response.ok){
+        contactForm.reset();
+        status.textContent = "Thanks — your message has been sent.";
+        status.style.display = "block";
+      }else{
+        status.textContent = "Something went wrong. Please try again or email us directly.";
+        status.style.display = "block";
+      }
+    }catch(err){
+      status.textContent = "Something went wrong. Please try again or email us directly.";
+      status.style.display = "block";
+    }
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Send Message";
+  });
+}
 </script>
 </body>
 </html>
