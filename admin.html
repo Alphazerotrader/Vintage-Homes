@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vintage Homes — Admin Panel</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 
 /* ==========================================================
@@ -21,9 +19,9 @@
   --sage:          #A9B79E;
   --ink:           #2B2620;
   --ink-soft:      #55503F;
-  --font-display: 'Fraunces', serif;
-  --font-body: 'Inter', sans-serif;
-  --font-mono: 'IBM Plex Mono', monospace;
+  --font-display: Georgia, 'Times New Roman', serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
   --radius: 4px;
   --wrap: 1140px;
 }
@@ -169,14 +167,7 @@ body { background: var(--parchment); color: var(--ink); }
 <div id="admin-panel" style="display:none;">
   <header class="admin-header">
     <div class="wrap header-inner">
-      <div class="brand"><span class="brand-mark"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <circle cx="20" cy="20" r="17" fill="none" stroke="#B8965A" stroke-width="1"/>
-        <circle cx="20" cy="20" r="14.3" fill="none" stroke="#B8965A" stroke-width="0.5"/>
-        <rect x="17.5" y="2.5" width="5" height="5" fill="#B8965A" transform="rotate(45 20 5)"/>
-        <rect x="17.5" y="32.5" width="5" height="5" fill="#B8965A" transform="rotate(45 20 35)"/>
-        <text x="15" y="27" font-family="Georgia, Times New Roman, serif" font-size="17" font-weight="700" fill="#EDE6D6" text-anchor="middle">V</text>
-        <text x="25" y="27" font-family="Georgia, Times New Roman, serif" font-size="17" font-weight="700" fill="#B8965A" text-anchor="middle">H</text>
-      </svg></span><span class="brand-name">Vintage Homes — Admin</span></div>
+      <div class="brand"><span class="brand-mark"><img class="vh-logo-img" alt="Vintage Homes logo" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"></span><span class="brand-name">Vintage Homes — Admin</span></div>
       <a href="index.html" class="admin-link">&larr; View site</a>
     </div>
   </header>
@@ -187,6 +178,14 @@ body { background: var(--parchment); color: var(--ink); }
       <fieldset>
         <legend>Site</legend>
         <div class="field"><label for="f-sitename">Site name</label><input id="f-sitename"></div>
+        <div class="field">
+          <label>Logo</label>
+          <div class="photo-upload-row">
+            <img class="photo-thumb" src="" alt="" id="logo-thumb" style="border-radius:50%; width:56px; height:56px;">
+            <input type="file" accept="image/*" class="file-btn" id="logo-upload">
+          </div>
+        </div>
+        <div class="field"><label>Or paste a logo image URL instead</label><input id="f-logo" placeholder="https://..."></div>
       </fieldset>
 
       <fieldset>
@@ -219,6 +218,30 @@ body { background: var(--parchment); color: var(--ink); }
         </p>
         <div id="portfolio-list"></div>
         <button type="button" class="add-btn" onclick="addPortfolioItem()">+ Add another listing</button>
+      </fieldset>
+
+      <fieldset>
+        <legend>Architect Design — Before &amp; After</legend>
+        <p style="font-size:.85rem; color:var(--ink-soft); margin-top:-8px;">
+          These two photos power the before/after slider on the home page. Upload one photo
+          for each side straight from your device.
+        </p>
+        <div class="field">
+          <label>Before Photo</label>
+          <div class="photo-upload-row">
+            <img class="photo-thumb" src="" alt="" id="arch-before-thumb">
+            <input type="file" accept="image/*" class="file-btn" id="arch-before-upload">
+          </div>
+        </div>
+        <div class="field"><label>Or paste a "before" image URL instead</label><input id="f-arch-before" placeholder="https://..."></div>
+        <div class="field">
+          <label>After Photo</label>
+          <div class="photo-upload-row">
+            <img class="photo-thumb" src="" alt="" id="arch-after-thumb">
+            <input type="file" accept="image/*" class="file-btn" id="arch-after-upload">
+          </div>
+        </div>
+        <div class="field"><label>Or paste an "after" image URL instead</label><input id="f-arch-after" placeholder="https://..."></div>
       </fieldset>
 
       <fieldset>
@@ -255,6 +278,9 @@ body { background: var(--parchment); color: var(--ink); }
    every visitor. Use "Reset to defaults" in the admin panel to
    clear saved edits and fall back to this.
 ============================================================ */
+const VH_LOGO_B64 = "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";
+document.querySelectorAll(".vh-logo-img").forEach(el => el.src = "data:image/jpeg;base64," + VH_LOGO_B64);
+
 const defaultData = {
   siteName: "Vintage Homes",
   hero: {
@@ -272,6 +298,11 @@ const defaultData = {
     address: "184 Elm Street, Ottawa, ON"
   },
   footerText: "All rights reserved.",
+  logoImage: "",
+  architecture: {
+    before: "https://picsum.photos/seed/vintage-homes-before/1000/620",
+    after: "https://picsum.photos/seed/vintage-homes-after/1000/620"
+  },
   team: [
     { name: "Margaret Ellery Cole", role: "Founder & Managing Partner", photo: "", bio: "Leads acquisitions and has personally overseen the restoration of more than 20 pre-1950s homes.", invested: "$850,000" },
     { name: "Desmond Okafor-Hale", role: "Head of Capital & Investor Relations", photo: "", bio: "Structures every partnership agreement and keeps the ledger transparent for all investors.", invested: "$620,000" },
@@ -337,6 +368,53 @@ function initials(name){ return name.split(" ").map(w => w[0]).slice(0,2).join("
 const ADMIN_PASSWORD = "vintage2026";
 let workingData = null;
 
+document.getElementById("f-logo").addEventListener("input", e => {
+  workingData.logoImage = e.target.value;
+  document.getElementById("logo-thumb").src = e.target.value;
+});
+document.getElementById("logo-upload").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = evt => {
+    workingData.logoImage = evt.target.result;
+    document.getElementById("logo-thumb").src = evt.target.result;
+    document.getElementById("f-logo").value = evt.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+document.getElementById("f-arch-before").addEventListener("input", e => {
+  workingData.architecture.before = e.target.value;
+  document.getElementById("arch-before-thumb").src = e.target.value;
+});
+document.getElementById("f-arch-after").addEventListener("input", e => {
+  workingData.architecture.after = e.target.value;
+  document.getElementById("arch-after-thumb").src = e.target.value;
+});
+document.getElementById("arch-before-upload").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = evt => {
+    workingData.architecture.before = evt.target.result;
+    document.getElementById("arch-before-thumb").src = evt.target.result;
+    document.getElementById("f-arch-before").value = evt.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+document.getElementById("arch-after-upload").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = evt => {
+    workingData.architecture.after = evt.target.result;
+    document.getElementById("arch-after-thumb").src = evt.target.result;
+    document.getElementById("f-arch-after").value = evt.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
 function tryUnlock(){
   const input = document.getElementById("password-input").value;
   if(input === ADMIN_PASSWORD){
@@ -350,6 +428,9 @@ function tryUnlock(){
 async function populateForm(){
   workingData = await loadData();
   document.getElementById("f-sitename").value = workingData.siteName;
+  if(workingData.logoImage === undefined) workingData.logoImage = "";
+  document.getElementById("f-logo").value = workingData.logoImage || "";
+  document.getElementById("logo-thumb").src = workingData.logoImage || "";
   document.getElementById("f-hero-title").value = workingData.hero.title;
   document.getElementById("f-hero-sub").value = workingData.hero.subtitle;
   document.getElementById("f-about-title").value = workingData.about.title;
@@ -359,6 +440,11 @@ async function populateForm(){
   document.getElementById("f-contact-email").value = workingData.contact.email;
   document.getElementById("f-contact-address").value = workingData.contact.address;
   document.getElementById("f-footer").value = workingData.footerText;
+  if(!workingData.architecture) workingData.architecture = { before: "", after: "" };
+  document.getElementById("f-arch-before").value = workingData.architecture.before || "";
+  document.getElementById("f-arch-after").value = workingData.architecture.after || "";
+  document.getElementById("arch-before-thumb").src = workingData.architecture.before || "";
+  document.getElementById("arch-after-thumb").src = workingData.architecture.after || "";
   renderTeamList();
   renderPortfolioList();
 }
