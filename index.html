@@ -48,7 +48,7 @@ h2{ font-size: clamp(1.8rem, 3.2vw, 2.4rem); color: var(--parchment); }
 .site-header{ position: sticky; top:0; z-index:50; background: rgba(22,33,26,.92); backdrop-filter: blur(6px); border-bottom: 1px solid rgba(169,183,158,.18); }
 .header-inner{ display:flex; align-items:center; justify-content:space-between; padding-top:16px; padding-bottom:16px; }
 .brand{ display:flex; align-items:center; gap:.6em; }
-.brand-mark{ font-family: var(--font-mono); border:1.5px solid var(--brass); color: var(--brass); width:34px; height:34px; display:flex; align-items:center; justify-content:center; border-radius:50%; font-size:.8rem; }
+.brand-mark{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 .brand-name{ font-family: var(--font-display); font-size:1.15rem; font-weight:600; letter-spacing:.01em; }
 .site-nav{ display:flex; align-items:center; gap:1.8em; font-size:.92rem; }
 .site-nav a{ color: var(--sage); transition: color .15s ease; cursor:pointer; }
@@ -139,9 +139,20 @@ h2{ font-size: clamp(1.8rem, 3.2vw, 2.4rem); color: var(--parchment); }
 .contact-form button{ align-self:flex-start; }
 
 /* footer */
-.site-footer{ padding: 28px 0; border-top:1px solid rgba(169,183,158,.15); }
-.footer-inner{ display:flex; justify-content:space-between; align-items:center; font-size:.85rem; color: var(--sage); }
+.site-footer{ padding: 64px 0 28px; border-top:1px solid rgba(169,183,158,.15); }
+.footer-grid{ display:grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(169,183,158,.15); }
+.footer-tagline{ color: var(--sage); font-size:.92rem; margin-top: 14px; max-width: 32ch; }
+.footer-col h4{ font-family: var(--font-mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color: var(--brass); margin: 0 0 1em; }
+.footer-col ul{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.7em; }
+.footer-col a{ color: var(--sage); font-size:.9rem; transition: color .15s ease; }
+.footer-col a:hover{ color: var(--brass); }
+.footer-col p{ color: var(--sage); font-size:.9rem; margin: 0 0 .5em; }
+.footer-inner{ display:flex; justify-content:space-between; align-items:center; font-size:.85rem; color: var(--sage); padding-top: 20px; }
 .footer-admin{ font-family: var(--font-mono); font-size:.78rem; border:1px solid var(--sage); padding:.35em .8em; border-radius:3px; cursor:pointer; }
+
+@media (max-width: 700px){
+  .footer-grid{ grid-template-columns: 1fr; gap: 28px; }
+}
 
 @media (max-width: 860px){
   .hero-inner{ grid-template-columns: 1fr; }
@@ -161,7 +172,14 @@ h2{ font-size: clamp(1.8rem, 3.2vw, 2.4rem); color: var(--parchment); }
 <header class="site-header">
   <div class="wrap header-inner">
     <a href="#top" class="brand">
-      <span class="brand-mark">VH</span>
+      <span class="brand-mark"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="20" cy="20" r="17" fill="none" stroke="var(--brass)" stroke-width="1"/>
+        <circle cx="20" cy="20" r="14.3" fill="none" stroke="var(--brass)" stroke-width="0.5"/>
+        <rect x="17.5" y="2.5" width="5" height="5" fill="var(--brass)" transform="rotate(45 20 5)"/>
+        <rect x="17.5" y="32.5" width="5" height="5" fill="var(--brass)" transform="rotate(45 20 35)"/>
+        <text x="15" y="27" font-family="var(--font-display)" font-size="17" font-weight="700" fill="var(--parchment)" text-anchor="middle">V</text>
+        <text x="25" y="27" font-family="var(--font-display)" font-size="17" font-weight="700" fill="var(--brass)" text-anchor="middle">H</text>
+      </svg></span>
       <span class="brand-name" id="site-name">Vintage Homes</span>
     </a>
     <nav class="site-nav">
@@ -260,6 +278,37 @@ h2{ font-size: clamp(1.8rem, 3.2vw, 2.4rem); color: var(--parchment); }
 </section>
 
 <footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-col">
+      <div class="brand">
+        <span class="brand-mark"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="20" cy="20" r="17" fill="none" stroke="var(--brass)" stroke-width="1"/>
+        <circle cx="20" cy="20" r="14.3" fill="none" stroke="var(--brass)" stroke-width="0.5"/>
+        <rect x="17.5" y="2.5" width="5" height="5" fill="var(--brass)" transform="rotate(45 20 5)"/>
+        <rect x="17.5" y="32.5" width="5" height="5" fill="var(--brass)" transform="rotate(45 20 35)"/>
+        <text x="15" y="27" font-family="var(--font-display)" font-size="17" font-weight="700" fill="var(--parchment)" text-anchor="middle">V</text>
+        <text x="25" y="27" font-family="var(--font-display)" font-size="17" font-weight="700" fill="var(--brass)" text-anchor="middle">H</text>
+      </svg></span>
+        <span class="brand-name">Vintage Homes</span>
+      </div>
+      <p class="footer-tagline">Restoring character homes and stewarding our investors' capital for the long term, one property at a time.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#portfolio">Portfolio</a></li>
+        <li><a href="#investors">Meet the Investors</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Get In Touch</h4>
+      <p id="footer-phone">(613) 555-0148</p>
+      <p id="footer-email">hello@vintagehomes.example</p>
+      <p id="footer-address">184 Elm Street, Ottawa, ON</p>
+    </div>
+  </div>
   <div class="wrap footer-inner">
     <span id="footer-name">&copy; <span class="year"></span> Vintage Homes. All rights reserved.</span>
   </div>
@@ -349,6 +398,9 @@ function renderSite(data){
   document.getElementById("contact-phone").textContent = data.contact.phone;
   document.getElementById("contact-email").textContent = data.contact.email;
   document.getElementById("contact-address").textContent = data.contact.address;
+  document.getElementById("footer-phone").textContent = data.contact.phone;
+  document.getElementById("footer-email").textContent = data.contact.email;
+  document.getElementById("footer-address").textContent = data.contact.address;
   document.getElementById("footer-name").innerHTML = `&copy; <span class="year"></span> ${data.siteName}. ${data.footerText}`;
   document.querySelectorAll(".year").forEach(el => el.textContent = new Date().getFullYear());
 
@@ -394,7 +446,6 @@ function renderSite(data){
 
 function startSite(){
   if(firebaseReady && dbRef){
-    // Live sync: re-renders automatically the instant admin.html saves a change
     dbRef.on("value", (snapshot) => {
       const data = snapshot.val();
       renderSite(data || defaultData);
@@ -408,13 +459,6 @@ function startSite(){
 }
 document.addEventListener("DOMContentLoaded", startSite);
 
-/* ============================================================
-   CONTACT FORM SUBMISSION
-   ------------------------------------------------------------
-   Sends the form to Formspree (https://formspree.io) so messages
-   land in your email inbox. Replace YOUR_FORM_ID in the form's
-   "action" attribute above with your own Formspree endpoint.
-============================================================ */
 const contactForm = document.getElementById("contact-form");
 if(contactForm){
   contactForm.addEventListener("submit", async (e) => {
