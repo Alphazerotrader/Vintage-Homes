@@ -142,6 +142,8 @@ legend{ font-family: var(--font-display); font-weight:600; padding: 0 8px; color
 body { background: var(--parchment); color: var(--ink); }
 .admin-header { position: static; }
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -242,9 +244,9 @@ body { background: var(--parchment); color: var(--ink); }
    >>> EDIT TEAM / INVESTOR PROFILES HERE <
    Each object below is one profile card on "Meet the Investors":
      name, role, photo (URL, blank = initials), bio, invested
-   Saved admin-panel edits are stored in localStorage and will
-   override these defaults automatically. Use "Reset to defaults"
-   in the admin panel to clear saved edits and fall back to this.
+   Saved admin-panel edits are stored in Firebase and sync live to
+   every visitor. Use "Reset to defaults" in the admin panel to
+   clear saved edits and fall back to this.
 ============================================================ */
 const defaultData = {
   siteName: "Vintage Homes",
@@ -275,16 +277,48 @@ const defaultData = {
   ]
 };
 
-const STORAGE_KEY = "vintageHomesData";
+/* ============================================================
+   FIREBASE CONFIG — PASTE YOUR OWN PROJECT'S CONFIG HERE
+   ------------------------------------------------------------
+   Must be the exact same config object you pasted into index.html.
+   Get this from: Firebase Console → Project Settings → Your apps
+============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyAyScy_QnM4QACT5aIejDKYXWziqT1kPb0",
+  authDomain: "vintage-homes.firebaseapp.com",
+  databaseURL: "https://vintage-homes-default-rtdb.firebaseio.com",
+  projectId: "vintage-homes",
+  storageBucket: "vintage-homes.firebasestorage.app",
+  messagingSenderId: "142925845960",
+  appId: "1:142925845960:web:b50c1d4817136f7aaadcfd"
+};
 
-function loadData(){
-  try{
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if(saved) return JSON.parse(saved);
-  }catch(e){ console.warn("Could not read saved data, using defaults.", e); }
-  return JSON.parse(JSON.stringify(defaultData));
+let dbRef = null;
+try{
+  if(firebaseConfig.apiKey !== "YOUR_API_KEY"){
+    firebase.initializeApp(firebaseConfig);
+    dbRef = firebase.database().ref("siteData");
+  }
+}catch(e){
+  console.error("Firebase failed to initialize.", e);
 }
-function saveData(data){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+
+async function loadData(){
+  if(!dbRef){
+    alert("Firebase isn't configured yet in this file — see the firebaseConfig comment near the top of admin.html.");
+    return JSON.parse(JSON.stringify(defaultData));
+  }
+  const snapshot = await dbRef.once("value");
+  const data = snapshot.val();
+  return data || JSON.parse(JSON.stringify(defaultData));
+}
+async function saveData(data){
+  if(!dbRef){
+    alert("Firebase isn't configured yet — this change was NOT saved. See the firebaseConfig comment near the top of admin.html.");
+    return;
+  }
+  await dbRef.set(data);
+}
 function initials(name){ return name.split(" ").map(w => w[0]).slice(0,2).join("").toUpperCase(); }
 
 
@@ -306,8 +340,8 @@ function tryUnlock(){
     document.getElementById("lock-error").style.display = "block";
   }
 }
-function populateForm(){
-  workingData = loadData();
+async function populateForm(){
+  workingData = await loadData();
   document.getElementById("f-sitename").value = workingData.siteName;
   document.getElementById("f-hero-title").value = workingData.hero.title;
   document.getElementById("f-hero-sub").value = workingData.hero.subtitle;
@@ -447,8 +481,11 @@ function removePortfolioItem(i){
   renderPortfolioList();
 }
 
-document.getElementById("admin-form").addEventListener("submit", e => {
+document.getElementById("admin-form").addEventListener("submit", async e => {
   e.preventDefault();
+  const toast = document.getElementById("save-toast");
+  const submitBtn = e.target.querySelector("button[type=submit]");
+  submitBtn.disabled = true;
   workingData.siteName = document.getElementById("f-sitename").value;
   workingData.hero.title = document.getElementById("f-hero-title").value;
   workingData.hero.subtitle = document.getElementById("f-hero-sub").value;
@@ -459,16 +496,20 @@ document.getElementById("admin-form").addEventListener("submit", e => {
   workingData.contact.email = document.getElementById("f-contact-email").value;
   workingData.contact.address = document.getElementById("f-contact-address").value;
   workingData.footerText = document.getElementById("f-footer").value;
-  saveData(workingData);
-  const toast = document.getElementById("save-toast");
-  toast.textContent = "✓ Saved. Open (or refresh) index.html to see your changes.";
+  try{
+    await saveData(workingData);
+    toast.textContent = "✓ Saved — live on the site now for everyone.";
+  }catch(err){
+    toast.textContent = "Save failed. Check your internet connection and Firebase setup.";
+  }
+  submitBtn.disabled = false;
   setTimeout(() => toast.textContent = "", 4000);
 });
 
-function resetDefaults(){
-  if(confirm("Reset all content to the original Vintage Homes defaults? This clears any saved edits.")){
-    localStorage.removeItem(STORAGE_KEY);
-    populateForm();
+async function resetDefaults(){
+  if(confirm("Reset all content to the original Vintage Homes defaults? This clears any saved edits for everyone.")){
+    await saveData(JSON.parse(JSON.stringify(defaultData)));
+    await populateForm();
     const toast = document.getElementById("save-toast");
     toast.textContent = "Reset to defaults.";
     setTimeout(() => toast.textContent = "", 4000);
